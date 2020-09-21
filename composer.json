@@ -1,0 +1,27 @@
+{
+    "name": "undercoder/vsorouter",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Andres Reyes",
+            "email": "chess.coach.ar@gmail.com"
+        }
+    ],
+    "require" : {
+		"monolog/monolog" : "^2.1",
+		"filp/whoops" : "^2.7",
+		"catfan/medoo" : "^1.7",
+		"robmorgan/phinx" : "^0.12.4",
+		"vlucas/phpdotenv": "^5.2",
+		"phpmailer/phpmailer": "^6.1"
+	},
+	"require-dev": {
+		"squizlabs/php_codesniffer": "^3.5"
+	},
+	"autoload" : {
+		"psr-4" : {
+			"vso\\" : "src/vso/"
+		}
+	}
+}
