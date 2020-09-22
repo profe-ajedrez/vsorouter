@@ -1,9 +1,27 @@
-<?php
+<?php declare(strict_types=1);
+
 namespace vso\requests;
 
-class RequestMethodFactory
+/**
+ * RequestMethod
+ *
+ * Encapsulates the switch case to call request methods
+ */
+abstract class RequestMethod
 {
-    public static function getMethod(string $method, InterfaceMethod $callableMethod, InterfaceRequest $request)
+    /**
+     * call
+     *
+     * Calls the corresponding method in the implemented InterfaceRequestMethod $callableMethod
+     * Returning its result.
+     *
+     * @param string $method
+     * @param InterfaceRequestMethod $callableMethod
+     * @param InterfaceRequest $request
+     *
+     * @return mixed
+     */
+    public function call(string $method, InterfaceRequestMethod $callableMethod, InterfaceRequest $request)
     {
         switch ($method) {
             case 'POST':
@@ -24,4 +42,3 @@ class RequestMethodFactory
         }
     }
 }
-

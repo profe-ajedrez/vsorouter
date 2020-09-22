@@ -9,19 +9,15 @@
         }
     ],
     "require" : {
-		"monolog/monolog" : "^2.1",
-		"filp/whoops" : "^2.7",
-		"catfan/medoo" : "^1.7",
-		"robmorgan/phinx" : "^0.12.4",
-		"vlucas/phpdotenv": "^5.2",
-		"phpmailer/phpmailer": "^6.1"
-	},
+        "undercoder/vsoutils": "^1.0"
+    },
 	"require-dev": {
 		"squizlabs/php_codesniffer": "^3.5"
 	},
 	"autoload" : {
 		"psr-4" : {
-			"vso\\" : "src/vso/"
+			"vso\\" : "src/vso/",
+			"vso\\requests\\": "src/vso/request"
 		}
 	}
 }
