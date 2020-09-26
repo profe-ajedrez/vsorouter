@@ -5,7 +5,11 @@ namespace vso\http\router;
 use \InvalidArgumentException;
 use \vso\vsoutils\typeutils\TypeUtils;
 use \vso\http\request\InterfaceRequest;
+use vso\http\response\InterfaceHttpResponseCodes;
 use \vso\http\router\resolver\InterfaceResolver;
+
+define('ROUTE', 0);
+define('METHOD', 1);
 
 /**
  *
@@ -79,35 +83,36 @@ class BaseRouter implements InterfaceRouter
      *
      * @param string $name
      * @param array $args
-     * @throws \Exception
+     * @throws \InvalidArgumentException
      */
     public function __call(string $name, array $args = [])
     {
-        define('ROUTE', 0);
-        define('METHOD', 1);
-
         if (!in_array(strtoupper($name), $this->supportedHttpMethods)) {
             $this->invalidMethodHandler();
         }
 
         if (empty($args)) {
-            throw new \Exception('Se esperaba ruta y método en ' . __CLASS__ . '::' . $name);
+            throw new \InvalidArgumentException('Se esperaba ruta y método en ' . __CLASS__ . '::' . $name);
         }
 
         if (count($args) < 2 || empty($args[METHOD])) {
-            throw new \Exception('Se esperaba método como segundo argumento en ' . __CLASS__ . '::' . $name);
+            throw new \InvalidArgumentException(
+                'Se esperaba método como segundo argumento en ' . __CLASS__ . '::' . $name
+            );
         }
 
         $typeUtils = new TypeUtils();
 
         if (!is_callable($args[ROUTE]) && !$typeUtils->isClosure($args[METHOD])) {
-            throw new \Exception(
+            throw new \InvalidArgumentException(
                 'Se esperaba a callable o closure object como segundo argumento en ' . __CLASS__ . '::' . $name
             );
         }
 
         if (empty($args[ROUTE]) || !is_string($args[ROUTE])) {
-            throw new \Exception('Se esperaba ruta como primer argumento en ' . __CLASS__ . '::' . $name);
+            throw new \InvalidArgumentException(
+                'Se esperaba ruta como primer argumento en ' . __CLASS__ . '::' . $name
+            );
         }
 
         $name   = strtoupper($name);

@@ -2,6 +2,7 @@
 
 namespace vso\http\router\resolver;
 
+use vso\http\response\InterfaceHttpResponseCodes;
 use \vso\http\router\InterfaceRouter;
 
 class RestfulResolver implements InterfaceResolver
@@ -13,21 +14,29 @@ class RestfulResolver implements InterfaceResolver
         $formatedRoute = trim(trim($router->request->requestUri), '/');
 
         $matchedRoute = $this->matchRoute($router, $formatedRoute, $httpMethod);
-        if ((bool) $matchedRoute) {
-            if (array_key_exists($matchedRoute, $methodDictionary)) {
-                $method = $methodDictionary[$matchedRoute];
-                if (is_null($method) || !is_callable($method)) {
-                    $router->defaultRequestHandler();
-                    return;
-                }
+        if ((bool) $matchedRoute && array_key_exists($matchedRoute, $methodDictionary)) {
+            $method = $methodDictionary[$matchedRoute];
+            if (is_callable($method)) {
                 $method($router->request);
                 return;
             }
         }
 
-        $router->defaultRequestHandler();
+        $handler404 = $this->getMethod404($methodDictionary) ?? function () use ($router) {
+            $router->defaultRequestHandler();
+        };
+
+        $handler404($router->request);
     }
 
+
+    public function getMethod404(array $routes) : callable
+    {
+        if (array_key_exists(InterfaceHttpResponseCodes::NOT_FOUND_404, $routes)) {
+            return $routes[InterfaceHttpResponseCodes::NOT_FOUND_404];
+        }
+        return null;
+    }
 
 
     public function matchRoute(InterfaceRouter $router, string $route, string $method) : string
