@@ -107,7 +107,7 @@ class BaseResponse implements InterfaceResponse, InterfaceToArray
 
     public function send() : void
     {
-        $this->contentType->contentTypeHandler($this);
+        $this->contentType->send($this);
     }
 
 

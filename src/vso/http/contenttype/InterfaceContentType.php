@@ -14,10 +14,12 @@ interface InterfaceContentType
     public function supportedContentType() : string;
 
     /**
-     * contentTypeHandler
+     * send
+     *
+     * Sends the passed response with implementer content type
      *
      * @param InterfaceResponse $response
      * @return callable
      */
-    public function contentTypeHandler(InterfaceResponse $response) : void;
+    public function send(InterfaceResponse $response) : void;
 }
