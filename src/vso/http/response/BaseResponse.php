@@ -38,13 +38,12 @@ class BaseResponse implements InterfaceResponse, InterfaceToArray
         $this->httpStatusCode  = $code;
         $this->msg = $msg;
         if ($data === null) {
-            $data = new stdClass();
+            $data = $this->defaultDataValue();
         }
 
         $this->data = $data;
         $this->contentType = $contentType;
     }
-
 
     
     public function __get(string $propertyName)
@@ -114,5 +113,10 @@ class BaseResponse implements InterfaceResponse, InterfaceToArray
     public function getClass() : string
     {
         return __CLASS__;
+    }
+
+    private function defaultDataValue() : stdClass
+    {
+        return new stdClass();
     }
 }
