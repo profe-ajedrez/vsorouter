@@ -5,7 +5,13 @@ namespace vso\http\router\resolver;
 use vso\http\response\InterfaceHttpResponseCodes;
 use \vso\http\router\InterfaceRouter;
 
-class RestfulResolver implements InterfaceResolver
+/**
+ * RestfulResolver
+ *
+ * Implements InterfaceResolver
+ *
+ */
+final class RestfulResolver implements InterfaceResolver
 {
     public function resolve(InterfaceRouter $router) : void
     {
@@ -22,7 +28,7 @@ class RestfulResolver implements InterfaceResolver
             }
         }
 
-        $handler404 = $this->getMethod404($methodDictionary) ?? function () use ($router) {
+        $handler404 = $this->getMethod404Handler($methodDictionary) ?? function () use ($router) {
             $router->defaultRequestHandler();
         };
 
@@ -30,7 +36,7 @@ class RestfulResolver implements InterfaceResolver
     }
 
 
-    public function getMethod404(array $routes) : callable
+    public function getMethod404Handler(array $routes) : callable
     {
         if (array_key_exists(InterfaceHttpResponseCodes::NOT_FOUND_404, $routes)) {
             return $routes[InterfaceHttpResponseCodes::NOT_FOUND_404];
@@ -69,7 +75,7 @@ class RestfulResolver implements InterfaceResolver
      * @param string $route
      * @return void
      */
-    protected function checkForRoot(string $route)
+    private function checkForRoot(string $route)
     {
         if (empty($route)) {
             $route = '/';

@@ -13,7 +13,7 @@ use \vso\vsoutils\stringutils\StringUtils;
  *
  * Provides hooks to execute callables in certain events
  */
-abstract class AbstractRequest
+class VsoRequest
 {
 
     protected array $settings = [];

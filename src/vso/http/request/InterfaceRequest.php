@@ -18,7 +18,7 @@ interface InterfaceRequest
      * @return AbstractRequest
      * @throws BadMethodCallException
      */
-    public function post() : AbstractRequest;
+    public function post() : void;
 
     /**
      * get
@@ -26,7 +26,7 @@ interface InterfaceRequest
      * @return AbstractRequest
      * @throws BadMethodCallException
      */
-    public function get() : AbstractRequest;
+    public function get() : void;
 
     /**
      * put
@@ -34,7 +34,7 @@ interface InterfaceRequest
      * @return AbstractRequest
      * @throws BadMethodCallException
      */
-    public function put() : AbstractRequest;
+    public function put() : void;
 
     /**
      * delete
@@ -42,7 +42,7 @@ interface InterfaceRequest
      * @return AbstractRequest
      * @throws BadMethodCallException
      */
-    public function delete() : AbstractRequest;
+    public function delete() : void;
 
     /**
      * patch
@@ -50,7 +50,7 @@ interface InterfaceRequest
      * @return AbstractRequest
      * @throws BadMethodCallException
      */
-    public function patch() : AbstractRequest;
+    public function patch() : void;
 
     /**
      * options
@@ -58,7 +58,7 @@ interface InterfaceRequest
      * @return AbstractRequest
      * @throws BadMethodCallException
      */
-    public function options() : AbstractRequest;
+    public function options() : void;
 
 
     public function isMethodSupported(string $httpMethod) : bool;

@@ -2,12 +2,14 @@
 
 namespace vso\http\request;
 
-use vso\http\request\AbstractRequest;
-use vso\http\request\InterfaceRequest;
-use vso\http\response\InterfaceResponse;
+use \vso\vsoutils\stringutils\StringUtils;
+use \vso\vsoutils\globalutils\Post;
+use \vso\vsoutils\globalutils\Get;
+use \vso\http\request\InterfaceRequest;
+use \vso\http\response\InterfaceResponse;
 use \Closure;
 
-class BaseRequest extends AbstractRequest implements InterfaceRequest
+class BaseRequest implements InterfaceRequest
 {
 
     public function __construct(
@@ -16,13 +18,44 @@ class BaseRequest extends AbstractRequest implements InterfaceRequest
         Closure $onEnd = null,
         Closure $onResponse = null
     ) {
-        parent::__construct(
-            $serverRef,
-            $onInit,
-            $onResponse,
-            $onEnd
-        );
+        $this->settings['SANITIZE_SPECIAL_CHARS'] = false;
+
+        $this->onInit = function () {
+        };
+        $this->onEnd = function () {
+        };
+        $this->onResponse = function () {
+        };
+
+        if (!is_null($onInit)) {
+            $this->onInit = $onInit;
+        }
+        if (!is_null($onEnd)) {
+            $this->onEnd = $onEnd;
+        }
+        if (!is_null($onResponse)) {
+            $this->onResponse = $onResponse;
+        }
+
+        $this->bootstrap($serverRef);
     }
+
+    private function bootstrap($serverRef)
+    {
+        $stUtils = new StringUtils();
+        foreach ($serverRef as $key => $value) {
+            $this->{$stUtils->toCamelCase($key)} = $value;
+        }
+    }
+
+    private function seizeRequestParams($serverRef)
+    {
+        $stUtils = new StringUtils();
+        foreach ($serverRef as $key => $value) {
+            $this->params[ $stUtils->toCamelCase($key) ] = $value;
+        }
+    }
+    
 
     public function getSupportedHttpMethod() : array
     {
@@ -34,52 +67,50 @@ class BaseRequest extends AbstractRequest implements InterfaceRequest
         return in_array($httpMethod, $this->getSupportedHttpMethod());
     }
     
-    public function post() : AbstractRequest
+    public function post() : void
     {
         if ($this->isMethodSupported('post')) {
-            $this->seizeRequestParams($_POST);
-            return $this;
+            $this->seizeRequestParams(Post::fetch());
         }
         $this->unsupportedMethod('post');
     }
 
-    public function get() : AbstractRequest
+    public function get() : void
     {
         if ($this->isMethodSupported('get')) {
-            $this->seizeRequestParams($_GET);
-            return $this;
+            $this->seizeRequestParams(Get::fetch());
         }
         $this->unsupportedMethod('get');
     }
 
-    public function put() : AbstractRequest
+    public function put() : void
     {
         if ($this->isMethodSupported('put')) {
-            return $this;
+            return;
         }
         $this->unsupportedMethod('put');
     }
 
-    public function delete() : AbstractRequest
+    public function delete() : void
     {
         if ($this->isMethodSupported('delete')) {
-            return $this;
+            return;
         }
         $this->unsupportedMethod('delete');
     }
 
-    public function patch() : AbstractRequest
+    public function patch() : void
     {
         if ($this->isMethodSupported('patch')) {
-            return $this;
+            return;
         }
         $this->unsupportedMethod('patch');
     }
 
-    public function options() : AbstractRequest
+    public function options() : void
     {
         if ($this->isMethodSupported('options')) {
-            return $this;
+            return;
         }
         $this->unsupportedMethod('options');
     }
@@ -87,5 +118,10 @@ class BaseRequest extends AbstractRequest implements InterfaceRequest
     public function answer(InterfaceResponse $response, int $bitmask = JSON_THROW_ON_ERROR) : void
     {
         $response->send($bitmask);
+    }
+
+    private function unsupportedMethod(string $method) : void
+    {
+        throw new \BadMethodCallException('method '. $method . ' not supported in class ' . __CLASS__);
     }
 }

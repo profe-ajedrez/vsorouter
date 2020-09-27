@@ -78,6 +78,36 @@ class BaseRouter implements InterfaceRouter
         $this->request = $resolver;
     }
 
+    public function get(string $url, \Closure $requestHandler) : void
+    {
+        $this->requestMethodHandler('get', $url, $requestHandler);
+    }
+
+    public function post(string $url, \Closure $requestHandler) : void
+    {
+        $this->requestMethodHandler('post', $url, $requestHandler);
+    }
+
+    public function put(string $url, \Closure $requestHandler) : void
+    {
+        $this->invalidMethodHandler();
+    }
+
+    public function patcht(string $url, \Closure $requestHandler) : void
+    {
+        $this->invalidMethodHandler();
+    }
+
+    public function delete(string $url, \Closure $requestHandler) : void
+    {
+        $this->invalidMethodHandler();
+    }
+
+    public function options(string $url, \Closure $requestHandler) : void
+    {
+        $this->invalidMethodHandler();
+    }
+
     /**
      * Receives calls to methods GET, POST, PUT, DELETE AND PATCH
      *
@@ -85,42 +115,41 @@ class BaseRouter implements InterfaceRouter
      * @param array $args
      * @throws \InvalidArgumentException
      */
-    public function __call(string $name, array $args = [])
+    private function requestMethodHandler(string $requestMethodName, string $url, \Closure $requestHandler)
     {
-        if (!in_array(strtoupper($name), $this->supportedHttpMethods)) {
+        if (!in_array(strtoupper($requestMethodName), $this->supportedHttpMethods)) {
             $this->invalidMethodHandler();
         }
 
-        if (empty($args)) {
-            throw new \InvalidArgumentException('Se esperaba ruta y método en ' . __CLASS__ . '::' . $name);
+        if (empty($url)) {
+            throw new \InvalidArgumentException(
+                'Se esperaba string {url} como primer argumento en ' . __CLASS__ . '::' . $requestMethodName . '()'
+            );
         }
 
-        if (count($args) < 2 || empty($args[METHOD])) {
+        if (is_null($requestHandler)) {
             throw new \InvalidArgumentException(
-                'Se esperaba método como segundo argumento en ' . __CLASS__ . '::' . $name
+                'Se esperaba callable {requestHandler} como segundo argumento en '
+                . __CLASS__ . '::' . $requestMethodName
             );
         }
 
         $typeUtils = new TypeUtils();
 
-        if (!is_callable($args[ROUTE]) && !$typeUtils->isClosure($args[METHOD])) {
+        if (!is_callable($requestHandler) && !$typeUtils->isClosure($requestHandler)) {
             throw new \InvalidArgumentException(
-                'Se esperaba a callable o closure object como segundo argumento en ' . __CLASS__ . '::' . $name
+                'Se esperaba a callable o closure object como segundo argumento en ' 
+                . __CLASS__ . '::' . $requestMethodName
             );
         }
 
-        if (empty($args[ROUTE]) || !is_string($args[ROUTE])) {
-            throw new \InvalidArgumentException(
-                'Se esperaba ruta como primer argumento en ' . __CLASS__ . '::' . $name
-            );
-        }
-
-        $name   = strtoupper($name);
-        $route  = trim(trim($args[ROUTE]), '/');
+   
+        $requestMethodName = strtoupper($requestMethodName);
+        $route  = trim(trim($url), '/');
         $route  = (empty($route) ? '/' : $route);
-        $method = $args[METHOD];
+        $method = $requestHandler;
 
-        $this->routes[$name][$route] = $method;
+        $this->routes[$requestMethodName][$route] = $method;
     }
 
 
