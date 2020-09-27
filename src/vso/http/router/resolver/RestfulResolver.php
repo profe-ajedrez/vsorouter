@@ -28,20 +28,23 @@ final class RestfulResolver implements InterfaceResolver
             }
         }
 
-        $handler404 = $this->getMethod404Handler($methodDictionary) ?? function () use ($router) {
-            $router->defaultRequestHandler();
-        };
+        $handler404 = $this->getMethod404Handler(
+            $methodDictionary,
+            function () use ($router) {
+                $router->defaultRequestHandler();
+            }
+        );
 
         $handler404($router->request);
     }
 
 
-    public function getMethod404Handler(array $routes) : callable
+    public function getMethod404Handler(array $routes, callable $default404Handler) : callable
     {
         if (array_key_exists(InterfaceHttpResponseCodes::NOT_FOUND_404, $routes)) {
             return $routes[InterfaceHttpResponseCodes::NOT_FOUND_404];
         }
-        return null;
+        return $default404Handler;
     }
 
 

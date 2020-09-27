@@ -41,5 +41,5 @@ interface InterfaceResolver
      * @param array $routes
      * @return callable
      */
-    public function getMethod404Handler(array $routes) : callable;
+    public function getMethod404Handler(array $routes, callable $default404Handler) : callable;
 }
